@@ -1,0 +1,101 @@
+﻿/*
+clase 05-05
+1-crea la aplicación
+2-explica lo que es el swager y qué significan 
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    en Program.cs
+
+3-luego creamos la clase CiudadesController.cs, con agregar clase
+    para convertir la clase en un controlador, se ponen atributos entre corchetes
+    [api/controller]
+    y al controlador lo hace heredar de ControllerBase. lo hace heredar de controllerbase porque va a usar react, no una vista de .net
+     con este tercer paso, dejó de ser una clase para convertirse en un controlador
+
+4-eliminamos todo lo relacionado al ejemplo de wheater forecast
+
+5- en Program.cs va a explicar el builder
+    var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+    var app = builder.Build();
+esto va a permitir que corramos un servidor web con C#
+
+Clase 05/19
+#1 Explica cómo se hace un controlador y cómo crea automáticamente la ruta poniendo [controller] en [Route("api/[controller]"")] 
+si ponemos [controller] toma la primera parte del controlador, es decir Movies de MoviesController
+
+#2 Así tampoco estaría bien la ruta porque tenemos que primero referir la película a un
+    //director, sino me va a traer todas las películas y me va a sobrecargar el servidor
+
+#3 forma correcta de filtrar por id de director así me trae sus películas - se hace que siempre se necesiten directores y que de esos
+directores haya distintos verbos http que nos traigan sus películas - esto fuerza a que las peliculas dependan de un director
+
+#4 en este punto, el método GetMovies no va a funcionar, primero hay que agregar en DirectorDto que hay 
+una colección (IList) de MoviesDto adentro de directores, y a esa lista la vamos a llamar Movies
+esta es la sentencia correcta: public IList<MoviesDto> Movies { get; set; } = new List<MoviesDto>();  
+//nota importante: agregar la segunda parte (new List<MoviesDto>(); para que no quede en null. esto se hace para que la lista pueda llegar 
+vacía pero no pueda devolver un null, porque un null puede romper un método
+GetMovies es un método que va a pedir el Id del Director, por eso GetMovies(int IdDirector)
+
+#5 este método me va a contar la cantidad de movies que tiene un director. lo hago en DirectorDto
+
+#6 esto lo que hace si encuentra null devuelva NotFound (404)
+y sino devuelve el Ok(200) y el director
+
+#7 creamos una nueva lista de MoviesDto
+Movies= new List<MoviesDto>
+
+La inicializamos así
+new MovieDto()
+
+y le pasamos la data
+{
+    Id = 1,
+    Name = "El nombre que le demos",
+    Description = "Una descripcion",
+    Location = "Dónde ocurre"
+}
+
+Es importante que los id no se repitan en las movies, no importa que sean de distintos directores, no se deben repetir
+
+
+*/
+
+//05-26
+Inyección de dependencia IDD
+IDD#1 Borra para que cuando en Directores Data no se cree una instancia dentro de la instancia
+IDD#2 Le dice al servicio en Program.cs que agregue una instancia singleton de Directores Data, un singleton es una instancia
+que está vida desde el inicio hasta el fin de la aplicación
+Un singleton es una como una instancia global, es siempre la misma cosa. Esa va a poder ser la unica instancia que va a poder
+tener la clase, no se va a poder crear otra. por eso singleton
+IDD#3 agregamos un constructor a DirecotoresController que va a ser el que va a hacer la inyección de la clase
+para la inyección primero se agrega el servicio a Program.cs (IDD#2) y después se hace la inyección en el constructor de la clase
+que se lo va a usar
+IDD#4 por ultimo se reemplaza DirectoresData.Instance por _directoresData en todos los lugares
+
+//Entidades
+#1 Se crean las entidades, parecidas a lo que tienen los Dtos, no pueden tener mas cosas
+#2 Se crearon Director y Movie como entidades 
+#3 Se pusieron las DataNotations, como [Required], esto no nos deja pasar nulo así que se hace el constructor para resolver el problema
+#4 Se les asignó Id Identity que es autoincremental
+#5 Se les asignó Key y ForeignKey en el caso de Movie que recibe la ForeinKey de ciudad
+#6 Recomendación de C# que se puede obviar
+
+Minuto 33
+Cómo funciona Entity Framework (A través de DBContext)
+EF#1 creamos la carpeta DBContext
+EF#2 creamos la clase dentro de la carpeta Directores Context
+EF#3 ahora vamos a explicar a la aplicacion que vamos a usar entity framework, lo tenemos que hacer en Program.cs
+lo hacemos poniendo builder.Services.AddDbContext<DirectoresContext>(); en Program.cs
+EF#4 instalamos SQL Lite, el paquete nuget microsoft.entityframeworkcore.sqllite
+seguir desde minuto 46.50
+
+
+
+
+
+
